@@ -22,6 +22,29 @@
       margin: 0; background: var(--bg); color: var(--text);
       font-family: Inter, sans-serif;
     }
+    header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .header-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .subtitle {
+    text-align: right;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .chain {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+  }
+
     .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
     header { display:flex; justify-content:space-between; margin-bottom: 20px; }
     .kpis { display:grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 20px; }
@@ -50,7 +73,7 @@
     .wrn {color: orange;}
     .span {margin-right: 10px; margin-top:10px;}
     .chain {font-weight: bold;}
-    .title {color:green; margin-top:20px;}
+    .title {color:green; margin-top:0px;}
     .footer {
       margin-top: 40px;
       padding: 16px;
@@ -70,19 +93,25 @@
 
     .footer a:hover {
       text-decoration: underline;
-    }  
+    }
+    .body {font-family: 'Courier New', Courier, monospace;}  
 </style>
-  <script type="module" crossorigin src="/idex/assets/index-BBodjhu8.js"></script>
+  <script type="module" crossorigin src="/idex/assets/index-C3xnPj1M.js"></script>
 </head>
-<body>
+<body class="body">
   <div class="wrap">
     <header>
-      <h1 class="title">iDex: a lightweight decentralized exchange</h1>
-      <div style="margin-top:25px;">
-        <span class="span chain" id="chain"></span>
+      <div class="header-left">
+        <h1 class="title">iDex: a lightweight decentralized exchange</h1>
+        <div class="subtitle">
+          <span class="chain" id="chain"></span>
+        </div>
+      </div>
+      <div class="header-right">
         <button class="btn primary" id="btnConnect">Connect Wallet</button>
       </div>
     </header>
+    
 
     <!-- KPI -->
     <div class="kpis">
@@ -196,7 +225,7 @@
         <button class="btn primary" id="btnRescue">Rescue Tokens</button>
       </div> -->
     </section>
-    <section class="card panel" id="panel-about" style="display:none;">
+    <section class="card panel" id="panel-about" style="display:none;font-family: 'Courier New', Courier, monospace;">
       <h2>About iDex</h2>
       <p>
         <strong>iDex</strong> is a lightweight decentralized exchange (DEX) designed to demonstrate the 

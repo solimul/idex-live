@@ -252,7 +252,7 @@ async function connect(): Promise<void> {
     const [account] = await walletClient.requestAddresses();
     connectedAccount = account;
     btnConnect.innerText = account.slice(0, 6) + "..." + account.slice(-4);
-    chainBadge.innerText =  supportedChainInfo[network].name;
+    chainBadge.innerText =  'Powered by ' + supportedChainInfo[network].name;
     localStorage.setItem(KEY_CONNECTED, "1");
     initFetchFeed ();
 }
@@ -268,7 +268,7 @@ async function restoreConnection ():Promise <void> {
     }
     connectedAccount = addrs[0];
     btnConnect.innerText = connectedAccount.slice(0, 6) + "..." + connectedAccount.slice(-4);
-    chainBadge.innerText = supportedChainInfo[network].name;
+    chainBadge.innerText ='Powered by ' + supportedChainInfo[network].name;
 }
 
 
@@ -614,6 +614,7 @@ function calculateOtherAmount (amount:bigint, token:number): bigint | undefined 
 
 async function main () : Promise <void> {
     if (!ensureEthereumOrWarn()) return; 
+    chainBadge.innerText ='Powered by ' + supportedChainInfo[network].name;
     const lpTokenAddress = await readContract ("getMyERC20ContractAddress",false, false, []) as `0x${string}`;
     console.log ("===>", lpTokenAddress);
     ensureEthereumOrWarn ();
