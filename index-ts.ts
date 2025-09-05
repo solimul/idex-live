@@ -29,7 +29,7 @@ import {
 
 import "viem/window"
 import { mainnet, sepolia, optimism, arbitrum, foundry } from 'viem/chains';
-
+let ethWallet:boolean;
 const supportedChains: Record<number, Chain> = {
     1: mainnet,
     11155111: sepolia,
@@ -536,6 +536,8 @@ function showMessage(message: string, type: "ok" | "err" | "wrn") {
 }
 
 function hideLiqStatus() {
+    if (ethWallet === false)  
+        return;
     status.classList.add("hidden");
 }
 
@@ -658,10 +660,13 @@ function detectPlatform(): "android" | "ios" | "desktop" {
     
 function ensureEthereumOrWarn(): boolean {
     const hasEth = typeof (window as any).ethereum !== "undefined";
-    if (hasEth)
-      return true;
     
-  
+    if (hasEth) {
+        ethWallet = true;
+        return true;
+    }
+    
+    ethWallet = false;
     const platform = detectPlatform();
     const METAMASK_LINK: Record<"android" | "ios" | "desktop", string> = {
         android: "https://play.google.com/store/apps/details?id=io.metamask",

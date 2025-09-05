@@ -83,16 +83,32 @@
       border-top: 1px solid var(--card-border);
       background: rgba(255, 255, 255, 0.02);
       border-radius: var(--radius) var(--radius) 0 0;
+      line-height: 1.6;
     }
 
     .footer a {
       color: var(--accent);
       text-decoration: none;
-      margin-left: 4px;
     }
 
     .footer a:hover {
       text-decoration: underline;
+    }
+
+    .footer code {
+      font-family: 'Courier New', monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .contract-label {
+      display: inline-block;
+      margin-right: 6px;
+      font-weight: 500;
+      color: var(--muted);
     }
     .body {font-family: 'Courier New', Courier, monospace;}  
 </style>
@@ -291,6 +307,13 @@
   <footer class="footer">
     © 2025 Md Solimul Chowdhury. All rights reserved. | 
     <a href="mailto:solimul.chowdhury@gmail.com">solimul.chowdhury@gmail.com</a>
+    <br />
+    <span class="contract-label">Smart Contract Deployed at:</span> 
+    <a href="https://sepolia.etherscan.io/address/0x9f0847148f231f3138d446952e151e694844d507" 
+      target="_blank" 
+      rel="noopener">
+      <code>0x9f0847148f231f3138d446952e151e694844d507</code>
+    </a>
   </footer>
 </body>
 </html>
