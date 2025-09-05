@@ -388,19 +388,18 @@ async function swap () : Promise <void>  {
         return;
     }
     const slippageBps = BigInt(Math.floor(slippage * 100)); 
-
+    showMessage ("Swapping in progess ...", "ok");
     updateQuote ();
     const approveHash = swapTokenIn.value === "USDC" 
                 ? await approveToken(USDC_CONTRACT_ADDRESS, amount)
                 : await approveToken(WETH_CONTRACT_ADDRESS, amount);
     await publicClient!.waitForTransactionReceipt({ hash: approveHash });
     const hash = await writeContract ("swap", [amount, quotedAmount, slippageBps, swapTokenIn.value, swapTokenOut.value]);
-    showMessage ("Swapping in progess ...", "ok");
     const receipt = await publicClient!.waitForTransactionReceipt({ hash });
     const quotedAmountStr = (swapTokenIn.value === "USDC"? formatEther (quotedAmount) : formatUsdc (quotedAmount)) as string ;
     if (receipt.status !== 'success')
         showMessage ("Swap Failed!","err");
-    let msg:string = swapAmountIn.value +" "+ swapTokenIn.value+" has been swapped for "+ quotedAmountStr +" "+ swapTokenOut.value+"\n"+hash;
+    let msg:string = swapAmountIn.value +" "+ swapTokenIn.value+" has been swapped for "+ setPrecision (quotedAmountStr, 5) +" "+ swapTokenOut.value+"\n"+hash;
     showMessage (msg, "ok");
     initFetchFeed ();
 } 
@@ -469,11 +468,26 @@ async function initFetchFeed(): Promise<void> {
       false
     ) as bigint | undefined;;
   
-    kpiUsdc.innerText = setPrecision (formatUsdc (usdcReserve));
-    kpiEth.innerText = setPrecision (formatEther(ethReserve));
-    kpiSwapFees.innerText = `${setPrecision (formatUsdc(usdcFees))} / ${setPrecision (formatEther(ethFees))}`;
+    kpiUsdc.innerText = setPrecision (formatUsdc (usdcReserve), 4);
+    kpiEth.innerText = setPrecision (formatEther(ethReserve), 4);
+    
+    kpiSwapFees.innerText = '';
+    const usdcBadge = document.createElement("span");
+    usdcBadge.className = "badge";
+    usdcBadge.innerText = setPrecision(formatUsdc(usdcFees), 4) + " USDC";
+
+    // Create ETH badge
+    const ethBadge = document.createElement("span");
+    ethBadge.className = "badge";
+    ethBadge.innerText = setPrecision(formatEther(ethFees), 4) + " ETH";
+
+    // Append both badges
+    kpiSwapFees.appendChild(usdcBadge);
+    kpiSwapFees.appendChild(ethBadge);
+
+    //kpiSwapFees.innerText = `${setPrecision (formatUsdc(usdcFees))} . ${setPrecision (formatEther(ethFees))}`;
     if (exchangeRate !== undefined)
-            kpiPrice.innerText = setPrecision (exchangeRate.toString());
+        kpiPrice.innerText = setPrecision (exchangeRate.toString(), 2);
   
     if (localStorage.getItem(KEY_CONNECTED) === "1" && walletClient != null) {
      if (!poolSeeded)
@@ -486,12 +500,11 @@ async function initFetchFeed(): Promise<void> {
             true,
             false
             ) as bigint;
-            kpiUelp.innerText = setPrecision (formatEther(yourUelp));
+            kpiUelp.innerText = setPrecision (formatEther(yourUelp), 4);
         }
       }
+      refreshProviderFees ();
     }
-
-    refreshProviderFees ();
 }
 
 async function refreshProviderFees () : Promise <void> {
@@ -501,8 +514,8 @@ async function refreshProviderFees () : Promise <void> {
         false
       ) as [bigint, bigint];
     
-    feeUsdc.value = formatUsdc (usdcFeesR);
-    feeEth.value = formatEther (ethFeesR);
+    feeUsdc.value = setPrecision (formatUsdc (usdcFeesR), 4);
+    feeEth.value = setPrecision (formatEther (ethFeesR), 4);
 }
 
 function setProviderBtn () {
@@ -522,7 +535,7 @@ async function swapTokenOutChanged ():Promise <void> {
 async function updateQuote ():Promise <void> {
     const amount = (swapTokenIn.value === "USDC"? parseUsdc (swapAmountIn.value) : parseEther (swapAmountIn.value)) as bigint;
     quotedAmount = await getQuote (amount) as bigint;
-    swapEstimatedOut.value = (swapTokenIn.value === "USDC"? formatEther (quotedAmount) : formatUsdc (quotedAmount)) as string ;
+    swapEstimatedOut.value = setPrecision(swapTokenIn.value === "USDC"? formatEther (quotedAmount) : formatUsdc (quotedAmount),6) as string ;
 }
 
 async function refreshFees () : Promise <void> {
@@ -550,7 +563,7 @@ function updateLiqUSDC  () {
     const usdcAmount = calculateOtherAmount (ethAmount, 0);
     if (!usdcAmount)
         return;
-    liqUsdc.value = formatUsdc (usdcAmount);
+    liqUsdc.value = setPrecision (formatUsdc (usdcAmount), 4);
 }
 
 function updateLiqETH () {
@@ -562,12 +575,12 @@ function updateLiqETH () {
     const ethAmount = calculateOtherAmount (usdcAmount, 1);
     if (!ethAmount)
         return;
-    liqEth.value = formatEther (ethAmount);
+    liqEth.value = setPrecision (formatEther (ethAmount), 4);
 }
 
 /** utilities */
-function setPrecision (numStr:string) {
-    return parseFloat (numStr).toFixed (2).toString ();
+function setPrecision (numStr:string, precision:number) {
+    return parseFloat (numStr).toFixed (precision).toString ();
 }
 
 function parseUsdc(input: string): bigint {
@@ -615,15 +628,18 @@ function calculateOtherAmount (amount:bigint, token:number): bigint | undefined 
 
 
 async function main () : Promise <void> {
+
     if (!ensureEthereumOrWarn()) return; 
+
     chainBadge.innerText ='Powered by ' + supportedChainInfo[network].name;
     const lpTokenAddress = await readContract ("getMyERC20ContractAddress",false, false, []) as `0x${string}`;
-    console.log ("===>", lpTokenAddress);
     ensureEthereumOrWarn ();
     poolSeeded = await readContract ("isSeeded",false, false) as boolean;
     restoreConnection();
     initFetchFeed ();
     setProviderBtn ();
+    if (connectedAccount !== null)
+        btnConnect.innerText = connectedAccount.slice(0, 6) + "..." + connectedAccount.slice(-4);
 }
 
 
@@ -676,6 +692,7 @@ function ensureEthereumOrWarn(): boolean {
     const targetUrl = METAMASK_LINK[platform];
     const label = platform === "desktop" ? "Desktop" : platform.toUpperCase();
     status.classList.remove ("hidden");
+    btnConnect.innerHTML = `<a style="color:red; font-family: 'Courier New', Courier, monospace;" href="${targetUrl}" target="_blank" rel="noopener">Install Wallet</a>`;
     status.innerHTML =
       `<div style="color:red">No Ethereum provider detected. ` +
       `Please <a href="${targetUrl}" target="_blank" rel="noopener">install MetaMask for ${label}</a> ` +

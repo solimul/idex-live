@@ -111,6 +111,16 @@
       color: var(--muted);
     }
     .body {font-family: 'Courier New', Courier, monospace;}  
+    .badge {
+      display: inline-block;
+      background-color: #f0f0f0;
+      color: #333;
+      padding: 2px 8px;
+      margin: 4px 4px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
 </style>
 </head>
 <body class="body">
@@ -132,8 +142,8 @@
     <div class="kpis">
       <div class="kpi"><div class="title">USDC Reserve</div><div class="value" id="kpiUsdc">–</div></div>
       <div class="kpi"><div class="title">ETH Reserve</div><div class="value" id="kpiEth">–</div></div>
-      <div class="kpi"><div class="title">Accrued Swap Fees</div><div class="value" id="kpiSwapFees">–</div> <div class="title"> USDC / ETH </div></div>
-      <div class="kpi"><div class="title">Price (USDC→ETH)</div><div class="value" id="kpiPrice">–</div></div>
+      <div class="kpi"><div class="title">Accrued Swap Fees</div><div class="value" id="kpiSwapFees"></div> <div class="title"> </div></div>
+      <div class="kpi"><div class="title">Price (USDC/ETH)</div><div class="value" id="kpiPrice">–</div></div>
       <div class="kpi"><div class="title">Your UELP</div><div class="value" id="kpiUelp">–</div></div>
     </div>
 
@@ -242,52 +252,155 @@
     </section>
     <section class="card panel" id="panel-about" style="display:none;font-family: 'Courier New', Courier, monospace;">
       <h2>About iDex</h2>
+    
       <p>
-        <strong>iDex</strong> is a lightweight decentralized exchange (DEX) designed to demonstrate the 
-        fundamental mechanics of Automated Market Makers (AMMs). It provides an intuitive interface 
-        for swapping tokens, managing liquidity, and observing protocol-level operations.
+        <strong>iDex</strong> is a decentralized exchange (DEX) that makes it easy to trade tokens 
+        and understand how a constant product Automated Market Maker (AMM) works.  
+        <br /><br />
+        The protocol is powered by smart contracts written in Solidity and can be deployed on any Ethereum-compatible chain.  
+        Whether you are new to DeFi or more experienced, iDex demonstrates the basics of token swaps, 
+        liquidity pools, and rewards in a clear and practical way.
       </p>
+    
       <ul>
-        <li><strong>Swap:</strong> Trade between ERC20 tokens (ETH / USDC) instantly with built-in slippage control.</li>
-        <br />
         <li>
-          <strong>Liquidity Management:</strong> 
-          Deposit liquidity (ETH and USDC) to become a partial owner of the pool. In return, 
-          <em>iDex</em> issues you <em>UELP</em> (User Exchange Liquidity Pool) tokens - 
-          a native, non-fungible ERC-20 token of iDex. These tokens represent your 
-          share of the pool and entitle you to a proportional share of swap fees and 
-          protocol rewards. By holding UELP, you effectively own part of the pool and 
-          can track, withdraw, or claim rewards based on your contribution. 
-          <br />
-        <br />
-          Liquidity providers are able to withdraw their supplied tokens 
-          after a minimum lock-up period of <strong>30 days</strong>, ensuring pool stability 
-          and fairness for all participants.
-          <br />
-          <br />
-          <em>Note: UELP tokens cannot be transferred or sold. They are strictly a representation of your liquidity position within iDex.</em>
+          <strong>Swap:</strong>  
+          Imagine a neighborhood market where people can quickly exchange goods at fair prices.  
+          iDex works the same way for tokens, letting anyone swap instantly without needing a middleman.  
+          <br /><br />
+          Behind the scenes, trades happen between ETH and USDC with built-in safeguards 
+          to protect against large price changes (slippage).
         </li>
         <br />
-
+    
         <li>
-          <strong>Protocol Rewards:</strong> 
-          Developers can earn and claim protocol fees that accrue from every swap. 
-          A fixed <strong>5% of all swap fees</strong> are directed to the protocol’s 
-          reward contract. These accumulated rewards can be periodically claimed, 
-          providing developers with a sustainable incentive mechanism to maintain 
-          and improve the protocol.  
-          <br><br>
-          <em>Note: Protocol Rewards are separate from liquidity provider (UELP) 
-          earnings, ensuring both developers and liquidity providers are fairly compensated.</em>
+          <strong>Liquidity:</strong>  
+          Think of neighbors pooling money into a shared garden. Everyone contributes, and when the garden produces, 
+          they all share in the harvest.  
+          <br /><br />
+          On iDex, you add ETH and USDC to the pool and receive <em>UELP</em> tokens (minted by the protocol) showing your share. 
+          By holding UELP, you earn a proportional share of swap fees.  
+          These tokens can’t be transferred or sold; they simply record your position.  
+          To keep the pool stable, withdrawals are only allowed after a <strong>30-day lock-up</strong>.
         </li>
-        
-
+        <br />
+    
+        <li>
+          <strong>Rewards:</strong>  
+          Just like setting aside part of a harvest for the gardeners who maintain the tools and soil, 
+          iDex directs a small portion of fees to those who maintain the protocol.  
+          <br /><br />
+          Every swap generates fees: most go back to liquidity providers, while a fixed 
+          <strong>5% of all swap fees</strong> are sent to a developer reward pool. 
+          This ensures both the community and developers are fairly compensated.
+        </li>
       </ul>
+      <br />
+      <hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;" />
+      <br />
+          <strong>Concrete Examples:</strong>
+          <ul>
+            <li>
+              <strong>Swap Example:</strong>  
+              A trader swaps <em>1,000 USDC</em> for ETH on iDex.  
+              <br /><br />
+              Suppose the pool currently holds:  
+              <ul>
+                <li>10 ETH</li>
+                <li>20,000 USDC</li>
+              </ul>
+              The constant product is: <code>10 × 20,000 = 200,000</code>.  
+              <br />
+              After the swap, the pool’s USDC increases to <strong>21,000</strong>.  
+              To keep the product constant (<code>x × y = 200,000</code>), the ETH balance must adjust to:  
+              <code>200,000 ÷ 21,000 ≈ 9.52 ETH</code>.  
+              <br /><br />
+              This means the trader receives about <strong>0.48 ETH</strong> for their 1,000 USDC (before fees).  
+              With a 0.3% fee applied, the pool actually records <strong>997 USDC</strong> as input and the trader receives slightly less ETH (~0.477 ETH).  
+              <br /><br />
+              In summary:  
+              <ul>
+                <li><em>Trader:</em> Pays 1,000 USDC → Receives ~0.477 ETH</li>
+                <li><em>Pool:</em> Now holds ~9.52 ETH and 20,997 USDC</li>
+                <li><em>Fees:</em> ~3 USDC added to the fee pool, later shared with liquidity providers</li>
+              </ul>
+            </li>
+            <br />
+        
+            <li>
+              <strong>Liquidity Example:</strong>  
+              A user deposits <em>5 ETH</em> and <em>10,000 USDC</em> into the pool.  
+              <br /><br />
+              Suppose the pool initially holds:  
+              <ul>
+                <li>10 ETH</li>
+                <li>20,000 USDC</li>
+              </ul>
+              Total pool value (at 1 ETH = 2,000 USDC) = <strong>40,000 USDC</strong>.  
+              <br />
+              The new deposit (5 ETH + 10,000 USDC) is worth <strong>20,000 USDC</strong>.  
+              <br /><br />
+              After the deposit, the pool holds:  
+              <ul>
+                <li>15 ETH</li>
+                <li>30,000 USDC</li>
+              </ul>
+              Total value = <strong>60,000 USDC</strong>.  
+              <br />
+              This means the new liquidity provider owns <strong>20,000 ÷ 60,000 = 33.3%</strong> of the pool.  
+              The protocol mints UELP tokens that represent this one-third ownership share.  
+              <br /><br />
+              Over the next month, suppose swaps generate <strong>900 USDC</strong> in fees (after protocol cut).  
+              This user earns <strong>33.3% × 900 ≈ 300 USDC</strong> in fees, added to their withdrawal balance.  
+              <br /><br />
+              In summary:  
+              <ul>
+                <li><em>Deposit:</em> 5 ETH + 10,000 USDC</li>
+                <li><em>Ownership:</em> ~33.3% of pool</li>
+                <li><em>Monthly Fees:</em> ~300 USDC (credited to their position)</li>
+              </ul>
+            </li>
+            
+            <br />
+        
+            <li>
+              <strong>Rewards Example:</strong>  
+              Across hundreds of swaps in a week, the pool generates <strong>2,000 USDC</strong> in total fees.  
+              <br /><br />
+              From this amount:  
+              <ul>
+                <li><strong>1,900 USDC</strong> (95%) goes to liquidity providers, distributed in proportion to their share of the pool.</li>
+                <li><strong>100 USDC</strong> (5%) goes to the developer reward pool.</li>
+              </ul>
+              <br />
+              Suppose there are three liquidity providers:  
+              <ul>
+                <li>Provider A owns 50% of the pool → earns <strong>950 USDC</strong></li>
+                <li>Provider B owns 30% of the pool → earns <strong>570 USDC</strong></li>
+                <li>Provider C owns 20% of the pool → earns <strong>380 USDC</strong></li>
+              </ul>
+              Meanwhile, the protocol’s reward contract accumulates the remaining <strong>100 USDC</strong> for developers.  
+              <br /><br />
+              In summary:  
+              <ul>
+                <li><em>Total Fees:</em> 2,000 USDC</li>
+                <li><em>Liquidity Providers:</em> 1,900 USDC shared proportionally</li>
+                <li><em>Developers:</em> 100 USDC allocated for protocol maintenance</li>
+              </ul>
+            </li>
+            
+          </ul>
+        
+    
       <p>
-        This project is a practical implementation of core DeFi principles, showcasing how 
-        constant-product AMMs work and how liquidity providers are rewarded in a decentralized environment.
+        In short: iDex works like a shared project where people can trade, pool resources, 
+        and share in the results — with everyone rewarded fairly for their role.
       </p>
     </section>
+    
+    
+    
+    
   </div>
 
   <script src="./index-ts.ts" type="module"> </script>
